@@ -464,14 +464,14 @@ void PrintRecord(Record* record){
 
 Record* GetAllForSorting(HospitalList* hospitalList){
     Record* head = NULL;
-    Record* recordTemp ;
-    Record* current = recordTemp;
+    Record* recordTemp;
+    Record* current;
     Record* temp;
     int i;
 
     for(i= 0; i<26; i++){
-        recordTemp= hospitalList[i].firstRecordPtr;
-        if(recordTemp!=NULL){
+        recordTemp = hospitalList[i].firstRecordPtr;
+        if(recordTemp != NULL){
             temp = malloc(sizeof(Record));
             strcpy(temp->name, recordTemp->name);
             strcpy(temp->surname, recordTemp->surname);
@@ -480,30 +480,39 @@ Record* GetAllForSorting(HospitalList* hospitalList){
             temp->nextRecord = NULL;
 
             if(head == NULL){
-                head = recordTemp;
+                head = temp;
                 current = head;
-            }else {
-                while (recordTemp != NULL) {
-                    temp = malloc(sizeof(Record));
-                    strcpy(temp -> name, recordTemp -> name);
-                    strcpy(temp -> surname, recordTemp -> surname);
-                    strcpy(temp -> polyclinic, recordTemp -> polyclinic);
-                    temp -> personId = recordTemp->personId;
-                    temp ->nextRecord = NULL;
-                    if (recordTemp -> nextRecord != NULL) {
-                        current->nextRecord = temp;
-                        recordTemp = recordTemp -> nextRecord;
-                        current = current->nextRecord;
-                    }else{
-                        current -> nextRecord = temp;
-                        current = current->nextRecord;
-                        break;
-                    }
-                    recordTemp = NULL;
+                recordTemp = recordTemp->nextRecord;
+            }
+            while(recordTemp != NULL){
+
+
+                if(recordTemp->nextRecord != NULL){
+                    current->nextRecord = temp;
+                    recordTemp = recordTemp -> nextRecord;
+                    current = current->nextRecord;
+                }else{
+                    current -> nextRecord = temp;
+                    current = current->nextRecord;
+                    break;
                 }
+                recordTemp = recordTemp->nextRecord;
+
+                temp = malloc(sizeof(Record));
+                strcpy(temp->name, recordTemp->name);
+                strcpy(temp->surname, recordTemp->surname);
+                strcpy(temp->polyclinic, recordTemp->polyclinic);
+                temp->personId = recordTemp->personId;
+                temp->nextRecord = NULL;
             }
         }
         recordTemp = NULL;
+        current = head;
+
+    }
+    while (current != NULL){
+        PrintRecord(current);
+        current = current->nextRecord;
     }
     return head;
 }
@@ -547,7 +556,6 @@ void SortWithNameAllList(HospitalList* hospitalList){
                 sortedList = recordTemp;
                 sortedListHead = recordTemp;
             }
-
         }else{
             if(sortedList == sortedListHead){
                 if(flag){
@@ -561,7 +569,6 @@ void SortWithNameAllList(HospitalList* hospitalList){
                 tmp = after->nextRecord;
                 after->nextRecord = recordTemp;
                 recordTemp->nextRecord = tmp;
-
             }
 
         }
