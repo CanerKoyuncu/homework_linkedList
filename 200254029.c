@@ -498,13 +498,13 @@ Record* GetAllForSorting(HospitalList* hospitalList){
                 }
                 recordTemp = recordTemp->nextRecord;
 
-                temp = malloc(sizeof(Record));
-                strcpy(temp->name, recordTemp->name);
-                strcpy(temp->surname, recordTemp->surname);
-                strcpy(temp->polyclinic, recordTemp->polyclinic);
-                temp->personId = recordTemp->personId;
-                temp->nextRecord = NULL;
-            }
+            temp = malloc(sizeof(Record));
+            strcpy(temp->name, recordTemp->name);
+            strcpy(temp->surname, recordTemp->surname);
+            strcpy(temp->polyclinic, recordTemp->polyclinic);
+            temp->personId = recordTemp->personId;
+            temp->nextRecord = NULL;
+        }
         }
         recordTemp = NULL;
         current = head;
