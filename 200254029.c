@@ -23,12 +23,12 @@ void menu(HospitalList*);
 
 int AddRecord(HospitalList* );
 void SearchRecords();
-void SortInsert(HospitalList* );
-void SortRecordsBySurname(char);
-void SortRecordsByPolyclinicName(char );
+void SortWithName(HospitalList*);
+void SortWithSurname(HospitalList*);
+void SortWithPolyclinic(HospitalList*);
 int SearchfirstLetter(HospitalList* ,char);
 Record* GetAllForSorting(HospitalList*);
-void SortName(HospitalList*);
+
 void Del(HospitalList*);
 void PrintRecord(Record*);
 
@@ -46,7 +46,10 @@ void menu(HospitalList *hl){
     int selected;
     bool flag=false;
     char select[20]= "";
+    char s;
+
     do{
+
     selected=0;
     printf("1-) Add New Record\n");
     printf("2-) Search Record (with name, surname, and polyclinic name)\n");
@@ -72,18 +75,21 @@ void menu(HospitalList *hl){
             Del(hl);
             continue;
 	    case 4:
-	        SortInsert(hl);
-            //GetAllForSorting(hl);
+	        SortWithName(hl);
             continue;
 	    case 5:
-	        printf("5-");
+	        SortWithSurname(hl);
             continue;
 	    case 6:
-	        printf("6");
+            SortWithPolyclinic(hl);
             continue;
 	    case 7:
-	    	printf("false");
-            flag = false;
+
+	    	printf("Are you sure you want to log out? ('Y'es or 'No')");
+            scanf("%c", &s);
+            if(strcmp(s,"y") == 0){
+                flag = false;
+            }
             continue;
         default:
             printf("Please enter a number between 1 and 7.\n");
@@ -103,11 +109,12 @@ void starter(HospitalList *hospitallist){
     }
 }
 
-//TODO: Hatalı giriş uyarıları yapılacak.
+
 int AddRecord(HospitalList* hl){
 	char nameTemp[50];
     char surnameTemp[50];
     char polyclinicNameTemp[50];
+    char polyclinicTemp[3];
 	int personIDTemp = 0;
 
 	printf("Name: ");
@@ -116,10 +123,37 @@ int AddRecord(HospitalList* hl){
     scanf(" %s", &surnameTemp);
     printf("Person ID: ");
     scanf(" %d", &personIDTemp);
-    printf("Polyclinic: ");
-    scanf(" %s", &polyclinicNameTemp);
+    printf("#####-Polyclinics-#####}\n");
+    printf("1)Orthodontics\n");
+    printf("2)Endoscopy\n");
+    printf("3)Implant\n");
+    printf("4)Cardiology\n");
+    printf("Please select a polyclinic:");
+    scanf(" %c", &polyclinicTemp);
+    int polyclinic = NULL;
+    polyclinic = atoi(polyclinicTemp);
 
-	Record *recordTemp = malloc(sizeof(Record));
+    switch (polyclinic){
+        case 1:
+            strcpy(polyclinicNameTemp , "Orthodontics");
+            goto bit;
+        case 2:
+            strcpy(polyclinicNameTemp , "Endoscopy");
+            goto bit;
+        case 3:
+            strcpy(polyclinicNameTemp , "Implant");
+            goto bit;
+        case 4:
+            strcpy(polyclinicNameTemp , "Cardiology");
+            goto bit;
+        default:
+            printf("Please select a polyclinic number between 1 and 4.");
+
+    }
+    Record *recordTemp;
+    bit:
+
+    recordTemp = malloc(sizeof(Record));
 	strcpy(recordTemp->name, nameTemp);
 	strcpy(recordTemp->surname, surnameTemp);
 	strcpy(recordTemp->polyclinic, polyclinicNameTemp);
@@ -191,6 +225,7 @@ void SearchName(HospitalList* hospitalList, char value[50]){
         if(strcmp(record->name, value) == 0){
             PrintRecord(record);
             flag = true;
+            record = record->nextRecord;
         }else if(record->nextRecord != NULL){
             record = record->nextRecord;
         }else{
@@ -335,12 +370,19 @@ Record* GetAllForSorting(HospitalList* hl){
             current = head;
         }else {
             while (recordTemp != NULL) {
+
+                Record *temp1 = malloc(sizeof(Record));
+                strcpy(temp1->name, recordTemp->name);
+                strcpy(temp1->surname, recordTemp->surname);
+                strcpy(temp1->polyclinic, recordTemp->polyclinic);
+                temp1->personId = recordTemp->personId;
+                temp1->nextRecord = NULL;
                 if (recordTemp->nextRecord != NULL) {
-                    current->nextRecord = temp;
+                    current->nextRecord = temp1;
                     recordTemp = recordTemp->nextRecord;
                     current = current->nextRecord;
                 }else{
-                    current->nextRecord = temp;
+                    current->nextRecord = temp1;
                     current = current->nextRecord;
                     break;
                 }
@@ -351,61 +393,7 @@ Record* GetAllForSorting(HospitalList* hl){
     return head;
 }
 
-int GetLength(HospitalList* hl){
-
-    int i;
-    int counter = 0;
-    Record* current = NULL;
-
-    for(i= 0; i<26; i++){
-        current = hl[i].firstRecordPtr;
-        if(current != NULL){
-            do{
-                counter += 1;
-                current = current->nextRecord;
-            }while(current != NULL);
-        }
-    }
-    return counter;
-}
-//bubble
-
-void SortName(HospitalList* hospitalList){
-
-    int length = GetLength(hospitalList);
-    bool flag;
-
-    Record* head= NULL;
-    Record* current = hl[0].firstRecordPtr;
-    Record* next = current->nextRecord;
-    Record* afterTemp = NULL;
-    Record* tmp = NULL;
-
-    for(int i =0; i < length; i++){
-        flag = true;
-        for (int j = length; j>1; j--) {
-            if(strcmp(current, next)>0){
-                if(afterTemp != NULL){
-                    flag = false;
-                    tmp = current->nextRecord;
-                    current->nextRecord = next->nextRecord;
-                    next->nextRecord = afterTemp->nextRecord;
-                    afterTemp->nextRecord = tmp;
-                }else if(afterTemp == NULL){
-                    flag = false;
-                    tmp = current->nextRecord;
-                    current->nextRecord = next->nextRecord;
-                    next->nextRecord = afterTemp->nextRecord;
-                    head = tmp;
-                }
-            }
-        }
-    }
-
-}
-
-//insertion sort
-void SortInsert(HospitalList* hospitalList){
+void SortWithName(HospitalList* hospitalList){
     Record* list = GetAllForSorting(hospitalList);
     Record* sortedList = NULL;
     Record* sortedListHead;
@@ -413,7 +401,6 @@ void SortInsert(HospitalList* hospitalList){
     Record* after = NULL;
     Record* tmp = NULL;
     bool flag = true;
-
 
     while(list != NULL){
 
@@ -423,8 +410,13 @@ void SortInsert(HospitalList* hospitalList){
                 if(flag){
                     flag = false;
                 }else{
+                    after = sortedList;
                     sortedList = sortedList->nextRecord;
                 }
+                if(sortedList == NULL){
+                    break;
+                }
+
             }
 
         }
@@ -436,46 +428,174 @@ void SortInsert(HospitalList* hospitalList){
         recordTemp->personId = list->personId;
         recordTemp->nextRecord= NULL;
         if(sortedList == NULL){
-            sortedList = recordTemp;
-            sortedListHead = recordTemp;
+            if(after != NULL) {
+                after->nextRecord = recordTemp;
+            }else{
+                sortedList=recordTemp;
+                sortedListHead = recordTemp;
+            }
+
         }else{
             if (sortedList == sortedListHead) {
                 if(flag){
                     recordTemp->nextRecord = sortedListHead;
                     sortedListHead = recordTemp;
                 }else{
-                    sortedList = sortedList->nextRecord;
                     recordTemp->nextRecord = sortedList->nextRecord;
                     sortedList->nextRecord = recordTemp;
-
                 }
-            }else
-            {
-                if (sortedList != NULL) {
-                    if (sortedList->nextRecord != NULL) {
-                        tmp = sortedList->nextRecord;
-                        sortedList->nextRecord = recordTemp;
+            }else{
+                        tmp = after->nextRecord;
+                        after->nextRecord = recordTemp;
                         recordTemp->nextRecord = tmp;
-                    } else {
-                        sortedList->nextRecord = recordTemp;
-                    }
-                }
+
             }
 
         }
-        current = sortedListHead;
-        while (current != NULL){
-            printf("%s\n", current->name);
-            current = current->nextRecord;
-        }
-
         flag = true;
         sortedList = sortedListHead;
         list = list->nextRecord;
     }
+    current = sortedListHead;
+    while (current != NULL){
+        PrintRecord(current);
+        current = current->nextRecord;
+    }
+}
 
+void SortWithSurname(HospitalList* hospitalList){
+    Record* list = GetAllForSorting(hospitalList);
+    Record* sortedList = NULL;
+    Record* sortedListHead;
+    Record* current = list;
+    Record* after = NULL;
+    Record* tmp = NULL;
+    bool flag = true;
 
+    while(list != NULL){
 
+        if(sortedList != NULL){
+
+            while(strcmp(list->surname, sortedList->surname)>0){
+                if(flag){
+                    flag = false;
+                }else{
+                    after = sortedList;
+                    sortedList = sortedList->nextRecord;
+                }
+                if(sortedList==NULL){
+                    break;
+                }
+            }
+        }
+
+        Record *recordTemp = malloc(sizeof(Record));
+        strcpy(recordTemp->name, list->name);
+        strcpy(recordTemp->surname, list->surname);
+        strcpy(recordTemp->polyclinic, list->polyclinic);
+        recordTemp->personId = list->personId;
+        recordTemp->nextRecord= NULL;
+        if(sortedList == NULL){
+            if(after != NULL) {
+                after->nextRecord = recordTemp;
+            }else{
+                sortedList=recordTemp;
+                sortedListHead = recordTemp;
+            }
+        }else{
+            if (sortedList == sortedListHead) {
+                if(flag){
+                    recordTemp->nextRecord = sortedListHead;
+                    sortedListHead = recordTemp;
+                }else{
+                    recordTemp->nextRecord = sortedList->nextRecord;
+                    sortedList->nextRecord = recordTemp;
+                }
+            }else{
+                tmp = after->nextRecord;
+                after->nextRecord = recordTemp;
+                recordTemp->nextRecord = tmp;
+
+            }
+
+        }
+        flag = true;
+        sortedList = sortedListHead;
+        list = list->nextRecord;
+    }
+    current = sortedListHead;
+    while (current != NULL){
+        PrintRecord(current);
+        current = current->nextRecord;
+    }
+}
+
+void SortWithPolyclinic(HospitalList* hospitalList){
+    Record* list = GetAllForSorting(hospitalList);
+    Record* sortedList = NULL;
+    Record* sortedListHead;
+    Record* current = list;
+    Record* after = NULL;
+    Record* tmp = NULL;
+    bool flag = true;
+
+    while(list != NULL){
+
+        if(sortedList != NULL){
+            while(strcmp(list->polyclinic, sortedList->polyclinic)>0){
+                if(flag){
+                    flag = false;
+                }else{
+                    after = sortedList;
+                    sortedList = sortedList->nextRecord;
+                }
+            }
+        }
+
+        Record *recordTemp = malloc(sizeof(Record));
+        strcpy(recordTemp->name, list->name);
+        strcpy(recordTemp->surname, list->surname);
+        strcpy(recordTemp->polyclinic, list->polyclinic);
+        recordTemp->personId = list->personId;
+        recordTemp->nextRecord= NULL;
+        if(sortedList == NULL){
+            if(after != NULL) {
+                after->nextRecord = recordTemp;
+            }else{
+                sortedList=recordTemp;
+                sortedListHead = recordTemp;
+            }
+        }else{
+            if (sortedList == sortedListHead) {
+                if(flag){
+                    recordTemp->nextRecord = sortedListHead;
+                    sortedListHead = recordTemp;
+                }else{
+                    recordTemp->nextRecord = sortedList->nextRecord;
+                    sortedList->nextRecord = recordTemp;
+                }
+            }else{
+                tmp = after->nextRecord;
+                after->nextRecord = recordTemp;
+                recordTemp->nextRecord = tmp;
+
+            }
+
+        }
+        flag = true;
+        sortedList = sortedListHead;
+        list = list->nextRecord;
+    }
+    current = sortedListHead;
+    char polyclinic[50] ="";
+    while (current != NULL){
+        if(strcmp(polyclinic,current->polyclinic) != 0){
+            printf("############PolyClinic: %s ###########\n", current->polyclinic);
+            *polyclinic = (char*)current->polyclinic;
+        }
+        PrintRecord(current);
+        current = current->nextRecord;
+    }
 }
 
 //deprecated functions
