@@ -34,7 +34,7 @@ void SortWithPolyclinicAllList(HospitalList *);
 
 int SearchfirstLetter(char);
 
-Record *GetAllForSorting(HospitalList *);
+Record *GetAllFromList(HospitalList *);
 
 void DeleteRecordFromList(HospitalList *hospitalList);
 
@@ -147,7 +147,6 @@ void mdenu(HospitalList *hospitalList) {
 
 }
 
-//tamamlandi
 void starter(HospitalList *hospitallist) {
     int i = 0;
     char c;
@@ -212,6 +211,7 @@ int AddRecordToList(HospitalList *hospitalList) {
     recordTemp = malloc(sizeof(Record));
     strcpy(recordTemp->name, nameTemp);
     strcpy(recordTemp->surname, surnameTemp);
+    *recordTemp->polyclinic = NULL;
     strcpy(recordTemp->polyclinic, polyclinicNameTemp);
     recordTemp->personId = personIDTemp;
     recordTemp->nextRecord = NULL;
@@ -236,7 +236,6 @@ int AddRecordToList(HospitalList *hospitalList) {
     return 1;
 }
 
-//tamamlandi
 int SearchfirstLetter(char cTemp) {
 
     char nameTemp = cTemp;
@@ -252,7 +251,6 @@ int SearchfirstLetter(char cTemp) {
 
 void SearchPolyclinicAllList(HospitalList *hospitalList) {
 
-    int iterator;
     char value[50];
     Record *record = NULL;
     bool flag = true;
@@ -297,20 +295,20 @@ void SearchPolyclinicAllList(HospitalList *hospitalList) {
     bit:
     printf("\n\n#######################################\n");
     printf("##########FOUNDED RECORDS##############\n");
-    for (iterator = 0; iterator <= 26 && flag; iterator++) {
-        record = (Record *) hospitalList[iterator].firstRecordPtr;
-        while (record != NULL) {
+    record = (Record *) GetAllFromList(hospitalList);
+    while (record != NULL) {
+        if (record->polyclinic != NULL) {
             if (strcmp(record->polyclinic, value) == 0) {
                 PrintRecord(record);
                 flag = false;
-                break;
+                record = record->nextRecord;
             } else if (record->nextRecord != NULL) {
                 record = record->nextRecord;
-
             } else {
-                flag = false;
                 break;
             }
+        } else {
+            break;
         }
     }
     if (flag) {
@@ -347,16 +345,16 @@ void SearchSurname(HospitalList *hospitalList, char value[50]) {
 
     printf("##########FOUNDED RECORDS#############\n");
 
-    for (iterator = 0; iterator <= 26 && flag; iterator++) {
-        record = hospitalList[iterator].firstRecordPtr;
-        while (record != NULL) {
-            if (strcmp(record->surname, value) == 0) {
-                PrintRecord(record);
-                flag = false;
-                break;
-            } else if (record->nextRecord != NULL) {
-                record = record->nextRecord;
-            }
+    record = (Record *) GetAllFromList(hospitalList);
+    while (record != NULL) {
+        if (strcmp(record->surname, value) == 0) {
+            PrintRecord(record);
+            flag = false;
+            record = record->nextRecord;
+        } else if (record->nextRecord != NULL) {
+            record = record->nextRecord;
+        } else {
+            break;
         }
     }
     if (flag) {
@@ -462,7 +460,7 @@ void PrintRecord(Record *record) {
     printf("##############################################\n\n");
 }
 
-Record *GetAllForSorting(HospitalList *hospitalList) {
+Record *GetAllFromList(HospitalList *hospitalList) {
     Record *head = NULL;
     Record *recordTemp;
     Record *current;
@@ -493,7 +491,7 @@ Record *GetAllForSorting(HospitalList *hospitalList) {
 }
 
 void SortWithNameAllList(HospitalList *hospitalList) {
-    Record *list = GetAllForSorting(hospitalList);
+    Record *list = GetAllFromList(hospitalList);
     Record *sortedList = NULL;
     Record *sortedListHead;
     Record *current = list;
@@ -559,7 +557,7 @@ void SortWithNameAllList(HospitalList *hospitalList) {
 }
 
 void SortWithSurnameAllList(HospitalList *hospitalList) {
-    Record *list = GetAllForSorting(hospitalList);
+    Record *list = GetAllFromList(hospitalList);
     Record *sortedList = NULL;
     Record *sortedListHead;
     Record *current = list;
@@ -626,10 +624,10 @@ void SortWithSurnameAllList(HospitalList *hospitalList) {
 }
 
 void SortWithPolyclinicAllList(HospitalList *hospitalList) {
-    Record *list = GetAllForSorting(hospitalList);
+    Record *list = GetAllFromList(hospitalList);
     Record *sortedList = NULL;
     Record *sortedListHead;
-    Record *current = list;
+    Record *current;
     Record *after = NULL;
     Record *tmp = NULL;
     bool flag = true;
