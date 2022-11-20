@@ -46,7 +46,7 @@ int main() {
     menu(hospitalList);
 }
 
-void menu(HospitalList *h1) {
+void menu(HospitalList *hospitalList) {
     int selected = 0;
     bool flag = true;
     do {
@@ -64,22 +64,22 @@ void menu(HospitalList *h1) {
         printf("\n");
         switch (selected) {
             case 1:
-                AddRecordToList(h1);
+                AddRecordToList(hospitalList);
                 break;
             case 2:
-                SearchRecordsFromList(h1);
+                SearchRecordsFromList(hospitalList);
                 break;
             case 3:
-                DeleteRecordFromList(h1);
+                DeleteRecordFromList(hospitalList);
                 break;
             case 4:
-                SortWithNameAllList(h1);
+                SortWithNameAllList(hospitalList);
                 break;
             case 5:
-                SortWithSurnameAllList(h1);
+                SortWithSurnameAllList(hospitalList);
                 break;
             case 6:
-                SortWithPolyclinicAllList(h1);
+                SortWithPolyclinicAllList(hospitalList);
                 break;
             case 7:
                 flag = false;
@@ -300,7 +300,7 @@ void SearchPolyclinicAllList(HospitalList *hospitalList) {
     for (iterator = 0; iterator <= 26 && flag; iterator++) {
         record = (Record *) hospitalList[iterator].firstRecordPtr;
         while (record != NULL) {
-            if (strcmp(record->polyclinic, value) != 0) {
+            if (strcmp(record->polyclinic, value) == 0) {
                 PrintRecord(record);
                 flag = false;
                 break;
@@ -396,15 +396,8 @@ void SearchRecordsFromList(HospitalList *hospitalList) {
                 flag = false;
                 break;
             case 3:
-                printf("Enter a string for search: ");
-                scanf(" %s", value);
-                SearchName(hospitalList, value);
-                SearchSurname(hospitalList, value);
+                SearchPolyclinicAllList(hospitalList);
                 flag = false;
-                flag = false;
-                break;
-            case 4:
-                printf("Incorrect value input, please enter an integer of your choice from the menu.\n");
                 break;
             default:
                 printf("Please enter a number between 1 and 4.");
