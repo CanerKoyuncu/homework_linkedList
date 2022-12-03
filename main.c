@@ -1,5 +1,3 @@
-/*Name: Caner Koyuncu, Number:200254029, Ders: COM 201_HW_1*/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
