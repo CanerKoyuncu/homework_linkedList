@@ -89,62 +89,6 @@ void menu(HospitalList *hospitalList) {
     } while (flag);
 }
 
-void mdenu(HospitalList *hospitalList) {
-
-    bool flag = false;
-    char select[20] = "";
-    char s;
-
-    do {
-        int selected;
-        printf("#####################-Hospital-Management-System-###################\n");
-        printf("##  1-) Add New Record                                            ##\n");
-        printf("##  2-) Search Record (with name, surname, and polyclinic name)   ##\n");
-        printf("##  3-) Delete Record (with name, surname, and polyclinic name)   ##\n");
-        printf("##  4-) Sort Records By Name                                      ##\n");
-        printf("##  5-) Sort Records By Surname                                   ##\n");
-        printf("##  6-) Sort Records By Polyclinic Name                           ##\n");
-        printf("##  7-) Exit                                                      ##\n");
-        printf("####################################################################\n");
-        printf("Please select: ");
-        flag = true;
-        fgets(select, sizeof select, stdin);
-        selected = atoi(select);
-
-        switch (selected) {
-            case 1:
-                AddRecordToList(hospitalList);
-                break;
-            case 2:
-                SearchRecordsFromList(hospitalList);
-                break;
-            case 3:
-                DeleteRecordFromList(hospitalList);
-                break;
-            case 4:
-                SortWithNameAllList(hospitalList);
-                break;
-            case 5:
-                SortWithSurnameAllList(hospitalList);
-                break;
-            case 6:
-                SortWithPolyclinicAllList(hospitalList);
-                break;
-            case 7:
-                printf("Are you sure you want to log out? ('Y'es or 'No')");
-                scanf("%c", &s);
-                if (strcmp(&s, "y") == 0) {
-                    flag = false;
-                }
-                break;
-            default:
-                printf("\nPlease enter a number between 1 and 7.\n");
-                break;
-        }
-    } while (flag);
-
-}
-
 void starter(HospitalList *hospitallist) {
     int i = 0;
     char c;
